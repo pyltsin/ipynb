@@ -12,7 +12,7 @@ class FileStorage(Storage):
         if not os.path.exists(self.file_name):
             raise StopIteration
 
-        with open(self.file_name) as f:
+        with open(self.file_name, encoding="utf-8") as f:
             for line in f:
                 yield line.strip()
 
@@ -21,7 +21,7 @@ class FileStorage(Storage):
         :param data_array: collection of strings that
         should be written as lines
         """
-        with open(self.file_name, 'w') as f:
+        with open(self.file_name, 'w', encoding="utf-8") as f:
             for line in data_array:
                 if line.endswith('\n'):
                     f.write(line)
@@ -32,7 +32,7 @@ class FileStorage(Storage):
         """
         :param data: string
         """
-        with open(self.file_name, 'a') as f:
+        with open(self.file_name, 'a', encoding="utf-8") as f:
             for line in data:
                 if line.endswith('\n'):
                     f.write(line)

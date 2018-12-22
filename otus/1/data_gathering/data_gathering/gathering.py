@@ -121,15 +121,16 @@ pep8 .
 """
 
 import logging
-
 import sys
+import pandas as pd
 
+from parsers.filter_parser import FilterParser
+from parsers.json_parser import JsonParser
 from scrappers.scrapper import Scrapper
 from storages.file_storage import FileStorage
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 SCRAPPED_FILE = 'scrapped_data.txt'
 TABLE_FORMAT_FILE = 'data.csv'
@@ -146,19 +147,58 @@ def gather_process():
 
 def convert_data_to_table_format():
     logger.info("transform")
-
-    # Your code here
-    # transform gathered data from txt file to pandas DataFrame and save as csv
-    pass
-
+    storage = FileStorage(SCRAPPED_FILE)
+    FileStorage(TABLE_FORMAT_FILE)
+    columns = ['id', 'text','date', 'attachments.link.url', 'attachments.link.title', 'comments.count', 'reposts.count', 'views.count']
+    filter_parser = FilterParser(columns)
+    json_parser = JsonParser(filter_parser)
+    parsed_data = json_parser.parse(storage)
+    df = pd.DataFrame(data=parsed_data, columns=columns)
+    df.to_csv(TABLE_FORMAT_FILE)
 
 def stats_of_data():
     logger.info("stats")
+    df = pd.DataFrame.from_csv(TABLE_FORMAT_FILE)
+    print('Первые 10 записей')
+    print(df.head(10))
+    
+    print()
+    print('describe')
+    print(df.describe())
+    
+    print()
+    print('shape')
+    print(df.shape)
+    
+    print()    
+    print('info')
+    print(df.info())
 
-    # Your code here
-    # Load pandas DataFrame and print to stdout different statistics about the data.
-    # Try to think about the data and use not only describe and info.
-    # Ask yourself what would you like to know about this data (most frequent word, or something else)
+    print()
+    print('Статистика комментариев, репостов, просмотров')
+    print(df[['comments.count', 'reposts.count', 'views.count']].describe())
+
+
+    print()
+    print()
+    print('Наиболее комментируемая статья')
+    print(df.loc[df['comments.count']==df['comments.count'].max(), ['text', 'comments.count']].values)
+    print('Наиболее репостируемая статья')
+    print(df.loc[df['reposts.count']==df['reposts.count'].max(), ['text', 'reposts.count']].values)
+    print('Наиболее просмотренная статья')
+    print(df.loc[df['views.count']==df['views.count'].max(), ['text','views.count']].values)
+
+
+    print()
+    print()    
+    print('Наименее комментируемая статья')
+    print(df.loc[df['comments.count']==df['comments.count'].min(), ['text', 'attachments.link.title', 'comments.count']].values)
+    print('Наименее репостируемая статья')
+    print(df.loc[df['reposts.count']==df['reposts.count'].min(), ['text', 'attachments.link.title','reposts.count']].values)
+    print('Наименее просмотренная статья')
+    print(df.loc[df['views.count']==df['views.count'].min(), ['text',  'attachments.link.title', 'views.count']].values)
+    
+    #Насчет Сталина и Кадырова - удивило
 
 
 if __name__ == '__main__':

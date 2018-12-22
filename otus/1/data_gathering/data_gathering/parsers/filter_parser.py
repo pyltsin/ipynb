@@ -3,12 +3,24 @@ from parsers.parser import Parser
 
 class FilterParser(Parser):
     """This is example class. There is no big purpose for it"""
+    def __init__(self, columns):
+        self._columns = columns
+        pass
 
     def parse(self, data):
-        """
-        Filter input data with only desired fields
-        :param data: dictionary of a lot of things
-        :return: list of dictionaries where key is one of
-        defined fields and value is this field's value
-        """
-        return [{k: v for k, v in data.items() if k in self.fields_set}]
+        row =[]
+        for column in self._columns:
+            inner = data
+            for path in column.split('.'):
+                if not path in inner:
+                    inner = None
+                    break
+                inner = inner[path]
+                if isinstance(inner, list):
+                    if len(inner)>0:
+                        inner = inner[0]
+                    else:
+                        inner = None
+                        break
+            row.append(inner)
+        return row
