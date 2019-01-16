@@ -173,7 +173,7 @@ def stats_of_data():
     print()    
     print('info')
     print(df.info())
-
+    pd.set_option('display.max_colwidth', -1)
     print()
     print('Статистика комментариев, репостов, просмотров')
     print(df[['comments.count', 'reposts.count', 'views.count']].describe())
@@ -181,26 +181,39 @@ def stats_of_data():
 
     print()
     print()
-    print('Наиболее комментируемая статья')
-    print(df.loc[df['comments.count']==df['comments.count'].max(), ['text', 'comments.count']].values)
-    print('Наиболее репостируемая статья')
-    print(df.loc[df['reposts.count']==df['reposts.count'].max(), ['text', 'reposts.count']].values)
-    print('Наиболее просмотренная статья')
-    print(df.loc[df['views.count']==df['views.count'].max(), ['text','views.count']].values)
+    print('Наиболее комментируемые статьи')
+    print(df.loc[df['comments.count']==df['comments.count'].max(), ['text', 'comments.count']])
+    print('Наиболее репостируемые статьи')
+    print(df.loc[df['reposts.count']==df['reposts.count'].max(), ['text', 'reposts.count']])
+    print('Наиболее просмотренные статьи')
+    print(df.loc[df['views.count']==df['views.count'].max(), ['text','views.count']])
 
 
     print()
     print()    
-    print('Наименее комментируемая статья')
-    print(df.loc[df['comments.count']==df['comments.count'].min(), ['text', 'attachments.link.title', 'comments.count']].values)
-    print('Наименее репостируемая статья')
-    print(df.loc[df['reposts.count']==df['reposts.count'].min(), ['text', 'attachments.link.title','reposts.count']].values)
-    print('Наименее просмотренная статья')
-    print(df.loc[df['views.count']==df['views.count'].min(), ['text',  'attachments.link.title', 'views.count']].values)
+    print('Наименее комментируемые статьи')
+    print(df.loc[df['comments.count']==df['comments.count'].min(), ['text', 'attachments.link.title', 'comments.count']])
+    print('Наименее репостируемые статьи')
+    print(df.loc[df['reposts.count']==df['reposts.count'].min(), ['text', 'attachments.link.title','reposts.count']])
+    print('Наименее просмотренные статьи')
+    print(df.loc[df['views.count']==df['views.count'].min(), ['text',  'attachments.link.title', 'views.count']])
     
     #Насчет Сталина и Кадырова - удивило
 
-
+    print()
+    print()    
+    df['date_pd'] = pd.to_datetime(df['date'],unit='s')
+    df['year'] = df.apply(lambda row: row['date_pd'].year, axis=1)
+    df['month'] = df.apply(lambda row: row['date_pd'].month, axis=1)
+    df['day'] = df.apply(lambda row: row['date_pd'].day, axis=1)
+    df['is_weekend'] = df.apply(lambda row: row['date_pd'].weekday()>4, axis=1)
+    df['weekday'] = df.apply(lambda row: row['date_pd'].weekday(), axis=1)
+    print('За какие периоды у нас данные')
+    print(df[['year', 'month', 'day', 'weekday']].describe())
+    gb = df.groupby(by = 'weekday')
+    print('Статистика суммарных просмотров по дням недели в среднем')
+    print(gb[['comments.count','reposts.count','views.count']].mean())
+    
 if __name__ == '__main__':
     """
     why main is so...?
