@@ -1,0 +1,7 @@
+<<<<<<< HEAD
+docker run -v ~/Doc/:/tmp/working -w=/tmp/working -p 8888:8888 --rm -it kaggle/python
+jupyter notebook --no-browser --ip="*" --notebook-dir=/tmp/working --allow-root
+=======
+docker run -v ~/ml/:/tmp/working -w=/tmp/working -p 8888:8888 --rm -it conda2
+jupyter notebook --no-browser --ip="*" --notebook-dir=/tmp/working
+>>>>>>> 70d4993a23986efe2dab590e4f207ff08233007c
