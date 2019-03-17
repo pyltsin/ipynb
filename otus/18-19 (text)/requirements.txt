@@ -1,0 +1,6 @@
+pyLDAvis
+matplotlib
+numpy
+pandas
+gensim
+nltk
