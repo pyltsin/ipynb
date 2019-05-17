@@ -1,0 +1,12 @@
+docker run -v C:/test:/root/data -i -t fb22968cf4d2 /bin/bash
+
+
+python train.py -d ../data/ --max_iter 20 -m RNN
+python test.py -d ../data/ -m RNN
+
+
+python train.py -d ../data/ --max_iter 20 --save All --r_t LSTM -m RNN
+python test.py -d ../data/ -m RNN
+
+python train.py -d ../data/ --max_iter 20 --repeated_interactions -m RNN
+python test.py -d ../data/ -m RNN
